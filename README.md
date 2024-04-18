@@ -22,3 +22,13 @@ This project utilizes the PBKDF2 (Password-Based Key Derivation Function 2) for 
 7.	Assuming successful HMAC validation, the script proceeds to decrypt the padded cipher text using the available keys and the CBC method.
 8.	Upon decryption, the decrypted data is written to an output file in the same directory as the encrypted file, allowing the user to access it.
 
+# UI script description – 
+The UI features a straightforward design crafted with the tkinter library in Python, aimed at enhancing user interaction through intuitive buttons and file entry boxes. Comprising three scripts, the project's central script serves as the main hub, orchestrating the execution of the encryption and decryption functionalities.
+
+•	Main Window: This window presents users with buttons to select their desired action—encryption or decryption.
+•	Encryption Window: Upon choosing encryption, a new window emerges, guiding users through file selection and password entry. Following encryption, a message window pops up to convey the outcome or any encountered errors.
+•	Decryption Window: Likewise, opting for decryption reveals a dedicated window where users input the file for decryption and its corresponding password. Subsequent to decryption, a message window promptly relays the result or any encountered errors.
+
+These message windows ensure transparent communication with users, providing timely feedback on the success or failure of encryption or decryption endeavors. Such a structured approach significantly improves user experience by seamlessly guiding users through each step while promptly addressing any potential issues.
+
+
