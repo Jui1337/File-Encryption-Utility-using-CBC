@@ -3,10 +3,8 @@ import tkinter as tk
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import hashlib
-from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, modes
 from cryptography.hazmat.primitives import hmac, hashes
-from cryptography.hazmat.backends import default_backend
 from Crypto.Util.Padding import unpad
 from Crypto.Cipher import AES, DES3
 from cryptography.exceptions import InvalidSignature
