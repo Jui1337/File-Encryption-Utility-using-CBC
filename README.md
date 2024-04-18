@@ -1,2 +1,2 @@
 # File-Encryption-Utility-using-CBC
-This project utilizes the PBKDF2 (Password-Based Key Derivation Function 2) for key derivation and supports both encryption and decryption functionalities.
+This project utilizes the PBKDF2 (Password-Based Key Derivation Function 2) for key derivation and is compatible with various cipher suites, including combinations such as tripleDES with sha256, aes128 with sha256, and aes256 with sha512. The system supports both encryption and decryption functionalities, employing HMAC for securing the Initialization Vector (IV) and ciphertext. Developed entirely in Python, the utility offers a straightforward user interface using Tkinter for enhanced user interaction.
