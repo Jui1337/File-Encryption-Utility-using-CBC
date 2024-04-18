@@ -2,10 +2,8 @@ import os
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import hashlib
-from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import algorithms, Cipher, modes
 from cryptography.hazmat.primitives import hmac, hashes
-from cryptography.hazmat.backends import default_backend
 from Crypto.Cipher import AES, DES3
 from Crypto.Util.Padding import pad
 from cryptography.hazmat.primitives.ciphers.algorithms import TripleDES, AES128, AES256
