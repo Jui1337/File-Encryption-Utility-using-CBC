@@ -75,10 +75,8 @@ def decrypt_with_hmac(encrypted_data_with_hmac, encryption_algo, kh):
 
     # Verify HMAC tag
     if computed_hmac != received_hmac:
-        #messagebox.showinfo("Error","HMAC validation failed. The file may have been tampered with.")
         return False, False
     else:
-        #messagebox.showinfo("Update","HMAC validation sucessful, decryption successful.")
         return (iv, ciphertext)
     
 #Using the above information, decrypt the cipher text 
@@ -101,7 +99,6 @@ def decrypt_with_algorithm(encryption_algo, ciphertext, ke, iv, file_path):
 
         # Unpad the decrypted data
         plaintext = unpad(decrypted_data, block_size)
-        print("plain text: ", plaintext)
         
         directory, filename = os.path.split(file_path)
         output_file_path = os.path.join(directory, f"decrypted_{filename}.txt")
@@ -117,10 +114,27 @@ def decrypt_with_algorithm(encryption_algo, ciphertext, ke, iv, file_path):
 
 # Function to read metadata from JSON file
 def read_metadata_from_json(file_name):
+    metadata = {}
+    cipher_text = b''
     current_directory = os.getcwd()
     file_path = os.path.join(current_directory, file_name)
-    with open(file_path, "r") as file:
-        metadata = json.load(file)
-    return metadata
+    try:
+        with open(file_path, "rb") as file:
+            # Read until newline to get the metadata JSON
+            metadata_json_bytes = b''
+            while True:
+                char = file.read(1)
+                if char == b'\n':
+                    break
+                metadata_json_bytes += char
+            
+            # Decode metadata JSON bytes and load metadata
+            metadata_json = metadata_json_bytes.decode('utf-8')
+            metadata = json.loads(metadata_json)
 
-
+            # Read the remaining content as cipher text
+            encrypted_data_with_hmac = file.read()
+    except FileNotFoundError:
+        messagebox.showinfo("Error","File not found or path is incorrect.") 
+    
+    return metadata, encrypted_data_with_hmac
