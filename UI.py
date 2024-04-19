@@ -62,8 +62,9 @@ def perform_encryption(file_path, password, cipher_suite, choice,encrypt_window)
     kh = Encryption.derive_HMAC_key(masterkey, cipher_suite, choice, key_len)
     ciphertext, iv = Encryption.encrypt_with_algorithm(cipher_suite, choice, file_content, ke)
     encrypted_data_with_hmac = Encryption.last_step_encryption(kh, ciphertext, iv)
-    flag = output_file(file_path, encrypted_data_with_hmac,encrypt_window)
-    Encryption.write_metadata(cipher_suite, choice, salt, iteration_count, kh)
+    metadata_json = Encryption.write_metadata(cipher_suite, choice, salt, iteration_count, kh)
+    flag = output_file(file_path,encrypted_data_with_hmac,encrypt_window,metadata_json)
+    
     
     return file_path, encrypted_data_with_hmac, cipher_suite[choice][0], kh, iv
 
@@ -80,13 +81,15 @@ def encryption_callback(file_entry, password_entry, choice_var, cipher_suite, en
         messagebox.showerror("Error", "Please select a valid choice")
 
 #Function that creates the output file which will have the encrypted data, this data will be HMAC covering the iv and cipher text.
-def output_file(file_path,encrypted_data_with_hmac,encrypt_window):
+def output_file(file_path,encrypted_data_with_hmac,encrypt_window,metadata_json):
     flag = 0
     directory, filename = os.path.split(file_path)
     output_file_path = os.path.join(directory, f"{filename}_enc")
     if output_file_path:
         with open(output_file_path, 'wb') as output_file:
-            output_file.write(encrypted_data_with_hmac)
+            output_file.write(metadata_json.encode('utf-8'))
+            output_file.write(b'\n')  
+            output_file.write(encrypted_data_with_hmac) 
 
         window = tk.Toplevel(root)
         window.title("Update")
@@ -124,27 +127,20 @@ def decryption_callback():
 def perform_decryption(file_entry, password_entry, decrypt_window):
     file_path = file_entry.get()
     password = password_entry.get()
-    metadata_path = "metadata.json"
 
     # Validate file path
     if not os.path.exists(file_path) or not file_path.endswith("_enc"):
         messagebox.showerror("Error", "Invalid or encrypted file not found.")
         return
-
-    try:
-        with open(file_path, 'rb') as file:
-            encrypted_data_with_hmac = file.read()
-    except FileNotFoundError:
-        messagebox.showinfo("Error","File not found or path is incorrect.")
         
     # Perform decryption
-    metadata = Decryption.read_metadata_from_json(metadata_path)
-    salt = metadata["Metadata"]["Salt"]
-    iteration_count = metadata["Metadata"]["Iteration Count"]
-    hashing_algorithm = metadata["Metadata"]["Hashing Algorithm in KDF"]
-    encryption_algo = metadata["Metadata"]["Encryption Algorithm"]
-    provided_hmac = metadata["Metadata"]["HMAC Key"]
-    
+    metadata, encrypted_data_with_hmac = Decryption.read_metadata_from_json(file_path)
+    salt = metadata["Salt"]
+    iteration_count = metadata["Iteration Count"]
+    hashing_algorithm = metadata["Hashing Algorithm in KDF"]
+    encryption_algo = metadata["Encryption Algorithm"]
+    provided_hmac = metadata["HMAC Key"]
+    print(salt,hashing_algorithm)
     masterkey, key_len = Decryption.derive_masterkey(password, salt, iteration_count, hashing_algorithm, encryption_algo)
     kh = Decryption.derive_kh(masterkey, hashing_algorithm, key_len)
     ke = Decryption.derive_ke(masterkey, hashing_algorithm, key_len)
@@ -157,7 +153,6 @@ def perform_decryption(file_entry, password_entry, decrypt_window):
         messagebox.showinfo("Failure", "File decryption failed, check password.")
         
     if flag == False:
-        #messagebox.showinfo("Failure", "File decryption failed.")
         close_application(decrypt_window)
     else:
         messagebox.showinfo("Success", "File decrypted successfully.")
