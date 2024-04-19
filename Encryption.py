@@ -110,17 +110,12 @@ def last_step_encryption(kh, cipher_text, iv):
 
 #function to write metadata required for decryption
 def write_metadata(cipher_suite, choice, salt, iteration_count, HMAC_key):
-  file_path = os.getcwd()
-  metadata_file_path = file_path+'\\metadata.json'
   metadata = {
-        "Metadata": {
-            "Encryption Algorithm": str(cipher_suite[choice][1]),
-            "Hashing Algorithm in KDF": str(cipher_suite[choice][0]),
-            "Iteration Count": int(iteration_count),
-            "Salt": salt.hex(),
-            "HMAC Key": HMAC_key.hex()
-        }
-    }
-  with open(metadata_file_path, 'w') as metadata_file:
-      json.dump(metadata, metadata_file, indent=4)
+    "Encryption Algorithm": str(cipher_suite[choice][1]),
+    "Hashing Algorithm in KDF": str(cipher_suite[choice][0]),
+    "Iteration Count": int(iteration_count),
+    "Salt": salt.hex(),
+    "HMAC Key": HMAC_key.hex()}
+  metadata_json = json.dumps(metadata)
+  return metadata_json 
   
